@@ -167,6 +167,15 @@ src_install() {
 		/var/lib/zabbix/externalscripts \
 		/var/log/zabbix
 
+	if use frontend; then
+		webapp_src_preinst
+		cp -R frontends/php/* "${D}/${MY_HTDOCSDIR}"
+		webapp_configfile \
+			"${MY_HTDOCSDIR}"/include/db.inc.php \
+			"${MY_HTDOCSDIR}"/include/config.inc.php
+		webapp_src_install
+	fi
+
 	if use server; then
 		insinto /etc/zabbix
 		doins "${FILESDIR}/3.0"/zabbix_server.conf
@@ -228,15 +237,6 @@ src_install() {
 		conf/zabbix_agentd/userparameter_examples.conf \
 		conf/zabbix_agentd/userparameter_mysql.conf \
 		conf/zabbix_server.conf
-
-	if use frontend; then
-		webapp_src_preinst
-		cp -R frontends/php/* "${D}/${MY_HTDOCSDIR}"
-		webapp_configfile \
-			"${MY_HTDOCSDIR}"/include/db.inc.php \
-			"${MY_HTDOCSDIR}"/include/config.inc.php
-		webapp_src_install
-	fi
 
 	if use java; then
 		dodir \
